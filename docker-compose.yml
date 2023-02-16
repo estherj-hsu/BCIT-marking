@@ -45,7 +45,7 @@ services:
       - ./backend:/app
     links:
       - mysql-db
-    command: npm start
+    command: sh -c 'npm install && npm start'
   client:
     build: ./frontend
     container_name: frontend_container
