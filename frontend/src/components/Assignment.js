@@ -3,31 +3,12 @@ import { useParams } from "react-router-dom";
 import { Card, Form, Button, Placeholder } from 'react-bootstrap';
 import { isEmpty, pickBy, size } from "lodash";
 import { API_URL } from '../common/config';
+import { ASSIGNMENTS } from '../common/constants';
 import axios from 'axios';
 import './Assignment.css';
 
-const ASSIGNMENTS = [
-  {
-    question: 'When was BCIT’s 50th-anniversary celebration?',
-    options: ['2016', '1967', '2017', '1987'],
-    type: 'radio',
-    idx: 0,
-  },
-  {
-    question: 'Which of the following services does the LTC provide? Select all that apply.',
-    options: ['Technical illustration', 'Instructional design', 'Financial advice', 'Admission and Registration', 'Audio-visual loans'],
-    type: 'checkbox',
-    idx: 1,
-  },
-  {
-    question: 'The current Prime Minister in Canada is (include the starting year for the PM) ',
-    options: [],
-    type: 'input',
-    idx: 2,
-  }
-]
-
 export function Assignment(props) {
+  const { studentList } = props;
   const [assignment, setAssignment] = useState({});
   const [student, setStudent] = useState({});
   const [isValidated, setIsValidated] = useState(false);
@@ -42,15 +23,14 @@ export function Assignment(props) {
 
   // Check unfinished assignments
   const checkAssignment = () => {
-    axios.get(`${API_URL}/students/${urlParams.idx}`).then((response) => {
-      const emptyAssignments = pickBy(response.data, (value, key) => key.startsWith("answer") && isEmpty(value));
-      setStudent(response.data);
-      if (size(emptyAssignments) === 0) {
-        setIsDone(true);
-      } else {
-        setAssignment(ASSIGNMENTS[ASSIGNMENTS.length - size(emptyAssignments)]);
-      }
-    });
+    const student = studentList.find(stu => Number(urlParams.id) === stu.id);
+    const emptyAssignments = pickBy(student, (value, key) => key.startsWith("answer") && isEmpty(value));
+    setStudent(student);
+    if (size(emptyAssignments) === 0) {
+      setIsDone(true);
+    } else {
+      setAssignment(ASSIGNMENTS[ASSIGNMENTS.length - size(emptyAssignments)]);
+    }
   }
 
   const onFormChange = (e, inputType) => {
@@ -71,7 +51,6 @@ export function Assignment(props) {
           ];
         } else {
           value = formValue[name].filter((uncheckItem) => uncheckItem !== e.target.value);
-          console.log('value.length', value.length, value.length === 0)
         }
       } else {
         value = e.target.value;
@@ -82,14 +61,15 @@ export function Assignment(props) {
   };
 
   const handleUpdate = () => {
-    axios.put(`${API_URL}/students/${urlParams.idx}`, formValue).then((response) => {
+    axios.put(`${API_URL}/students/${urlParams.id}`, formValue).then((response) => {
+
       console.log(response.data);
       handleNext();
     });
   };
 
   const handleNext = () => {
-    const isLast = assignment.idx === assignment.length - 1;
+    const isLast = assignment.idx === ASSIGNMENTS.length - 1;
     setFormValue({});
     formRef.current.reset();
 
@@ -108,10 +88,13 @@ export function Assignment(props) {
   };
 
   return (
-    <Card>
-      <Card.Header>Hello {student.name}</Card.Header>
+    <Card className="text-start">
+      <Card.Header>
+        Hello <span className="fw-bold">{student.name}</span>
+        <small className="float-end text-secondary">{assignment.idx+1}/{ASSIGNMENTS.length}</small>
+      </Card.Header>
       <Card.Body>
-        {isEmpty(assignment) ?
+        {isEmpty(assignment) || isDone ?
           isDone ?
             <div>
               All done!
