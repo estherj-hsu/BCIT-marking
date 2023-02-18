@@ -52,7 +52,7 @@ export function Main() {
                 element={<Assignment studentList={students} />} />
               <Route
                 path="/instructor"
-                element={<StudentList isMarking={true} studentList={students} />} />
+                element={<StudentList isMarking={true} studentList={students} getStudents={getStudents} />} />
               <Route
                 path="/instructor/student/:id"
                 element={<Marker studentList={students} />} />

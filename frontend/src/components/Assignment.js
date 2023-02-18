@@ -88,7 +88,7 @@ export function Assignment(props) {
   };
 
   return (
-    <Card className="text-start">
+    <Card className="text-start Assignment">
       <Card.Header>
         Hello <span className="fw-bold">{student.firstName}</span>
         <small className="float-end text-secondary">{assignment.idx+1}/{ASSIGNMENTS.length}</small>
