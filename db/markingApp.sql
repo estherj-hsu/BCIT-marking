@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql-db
--- Generation Time: Feb 18, 2023 at 03:00 AM
+-- Generation Time: Feb 18, 2023 at 07:21 PM
 -- Server version: 5.7.41
 -- PHP Version: 8.1.15
 
@@ -21,6 +21,27 @@ SET time_zone = "+00:00";
 --
 -- Database: `markingApp`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `instructors`
+--
+
+CREATE TABLE `instructors` (
+  `id` int(255) UNSIGNED NOT NULL,
+  `firstName` varchar(256) NOT NULL,
+  `lastName` varchar(256) NOT NULL,
+  `email` varchar(256) NOT NULL,
+  `password` varchar(256) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `instructors`
+--
+
+INSERT INTO `instructors` (`id`, `firstName`, `lastName`, `email`, `password`) VALUES
+(1, 'Super', 'Instructor', 'instructor@test.com', 'password');
 
 -- --------------------------------------------------------
 
