@@ -3,7 +3,7 @@ import { Card, ListGroup, Form, Button } from 'react-bootstrap';
 import { useParams, Link } from "react-router-dom";
 import { ASSIGNMENTS } from '../common/constants';
 import { API_URL } from '../common/config';
-import { isEmpty, pickBy, size } from "lodash";
+import { isEmpty } from "lodash";
 import './Marker.css';
 import axios from 'axios';
 
@@ -50,7 +50,7 @@ export function Marker(props) {
   return (
     <Card className="text-start">
       <Card.Header>
-        Student: {student && student.name}
+        Student: {student && student.firstName}
       </Card.Header>
       <Card.Body>
         <Form ref={formRef} onSubmit={handleSubmit}>

@@ -15,7 +15,7 @@ export function StudentList(props) {
         return (
           <Col>
             <Card>
-              <Card.Header>{student.name}</Card.Header>
+              <Card.Header>{student.firstName} {student.lastName}</Card.Header>
               <Card.Body>
                 <Card.Text>
                   Undone Assignments: {student.emptyAssignments}
