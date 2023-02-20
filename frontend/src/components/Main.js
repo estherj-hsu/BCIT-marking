@@ -73,17 +73,14 @@ export function Main() {
           isEmpty(students) ? <Spinner/> :
             <Routes>
               <Route
-                path="/student"
-                element={<StudentList isMarking={false} studentList={students} />} />
-              <Route
                 path="/student/:id"
                 element={<Assignment studentList={students} />} />
               <Route
                 path="/instructor"
-                element={<StudentList isMarking={true} studentList={students} getStudents={getStudents} />} />
+                element={<StudentList studentList={students} getStudents={getStudents} />} />
               <Route
                 path="/instructor/student/:id"
-                element={<Marker studentList={students} getStudents={getStudents} />} />
+                element={<Marker isStudent={false} studentList={students} getStudents={getStudents} />} />
             </Routes>
           }
         </Col>

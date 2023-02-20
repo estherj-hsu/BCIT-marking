@@ -8,7 +8,7 @@ import { markingApi } from '../common/api';
 const STUDENT_FIELDS = ['firstName', 'lastName', 'password', 'email'];
 
 export function StudentList(props) {
-  const { studentList, isMarking, getStudents } = props;
+  const { studentList, getStudents } = props;
   const [formValue, setFormValue] = useState({});
   const [isValidated, setIsValidated] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -38,17 +38,15 @@ export function StudentList(props) {
 
   return (
     <Row className="d-flex align-items-center text-center">
-      {isMarking ?
-        <Col xs={12} className="text-end mb-3">
-          <Button
-            size="sm"
-            onClick={() => setIsVisible(true)}
-            variant="outline-secondary">Add Student</Button>
-        </Col>
-      : null}
+      <Col xs={12} className="text-end mb-3">
+        <Button
+          size="sm"
+          onClick={() => setIsVisible(true)}
+          variant="outline-secondary">Add Student</Button>
+      </Col>
       {studentList.map(student => {
-        const isDone = (isMarking && student.emptyMarks === 0) || (!isMarking && student.emptyAssignments === 0);
-        const isNotReady = isMarking && student.emptyAssignments !== 0;
+        const isNotReady = student.emptyAssignments !== 0;
+        const isDone = !isNotReady && student.emptyMarks === 0;
         return (
           <Col xs={4} className="mb-3">
             <Card>
@@ -61,50 +59,48 @@ export function StudentList(props) {
                   disabled={isDone || isNotReady}
                   className="mx-2"
                   size="sm"
-                  onClick={() => navigate(`${isMarking ? '/instructor' : ''}/student/${student.id}`)}
+                  onClick={() => navigate(`/instructor/student/${student.id}`)}
                   variant={`${isDone || isNotReady ? 'outline-' : ''}primary`}>
-                  {isDone ? 'All Done' : isMarking ? 'Mark' : 'Start'}
+                  {isDone ? 'All Done' : 'Mark'}
                 </Button>
               </Card.Body>
             </Card>
           </Col>
         )
       })}
-      {isMarking ?
-        <Modal
-          show={isVisible}
-          onHide={() => setIsVisible(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Add Student</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form ref={formRef} onSubmit={handleSubmit}>
-              <Form.Group>
-                <Row>
-                  {STUDENT_FIELDS.map((field, idx) =>
-                    <Col xs={field !== 'email' ? 6 : 6}>
-                      <Form.Control
-                        required
-                        onChange={e => setFormValue({ ...formValue, [e.target.name]: e.target.value })}
-                        size="sm"
-                        type="text"
-                        placeholder={startCase(field)}
-                        name={field}
-                        className="d-inline mb-3" />
-                    </Col>
-                  )}
-                </Row>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  type="submit">
-                  Create
-                </Button>
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-        </Modal>
-      : null}
+      <Modal
+        show={isVisible}
+        onHide={() => setIsVisible(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Student</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form ref={formRef} onSubmit={handleSubmit}>
+            <Form.Group>
+              <Row>
+                {STUDENT_FIELDS.map((field, idx) =>
+                  <Col xs={field !== 'email' ? 6 : 6}>
+                    <Form.Control
+                      required
+                      onChange={e => setFormValue({ ...formValue, [e.target.name]: e.target.value })}
+                      size="sm"
+                      type="text"
+                      placeholder={startCase(field)}
+                      name={field}
+                      className="d-inline mb-3" />
+                  </Col>
+                )}
+              </Row>
+              <Button
+                size="sm"
+                variant="primary"
+                type="submit">
+                Create
+              </Button>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Row>
   );
 }
