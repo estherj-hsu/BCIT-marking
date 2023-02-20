@@ -90,14 +90,16 @@ export function Assignment(props) {
     <Card className="text-start Assignment">
       <Card.Header>
         Hello <span className="fw-bold">{student.firstName}</span>
-        <small className="float-end text-secondary">{assignment.idx+1}/{ASSIGNMENTS.length}</small>
+        {isDone ? null :
+          <small className="float-end text-secondary">{assignment.idx+1}/{ASSIGNMENTS.length}</small>
+        }
       </Card.Header>
       <Card.Body>
         {isEmpty(assignment) || isDone ?
           isDone ?
-            <div>
-              All done!
-            </div>
+            <p>
+              All done! The instructor will mark your assignments soon.
+            </p>
           :
           <Placeholder as="p" animation="glow">
             <Placeholder xs={12} />
