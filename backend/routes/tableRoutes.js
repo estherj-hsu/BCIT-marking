@@ -3,7 +3,10 @@ const router = express.Router();
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { CONNECTION_CONFIG, JWT_SECRET } = require('../configs');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+
+const { CONNECTION_CONFIG, JWT_SECRET, MAILTRAP_CONFIG, MAIL_OPTIONS } = require('../configs');
 
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -19,6 +22,26 @@ function requireAuth(req, res, next) {
   } else {
     res.sendStatus(401);
   }
+}
+
+
+function sendEmail(student) {
+  const transporter = nodemailer.createTransport(MAILTRAP_CONFIG);
+  const emailTemplate = fs.readFileSync('./scoreEmail.html', 'utf-8');
+  const { firstName, email, mark1, mark2, mark3 } = student
+  const emailBody = emailTemplate.replace('{{ name }}', firstName).replace('{{ mark1 }}', mark1).replace('{{ mark2 }}', mark2).replace('{{ mark3 }}', mark3);
+  const mailOptions = {
+    ...MAIL_OPTIONS,
+    to: email,
+    html: emailBody
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(`Email sent: ${info.response}`);
+    }
+  });
 }
 
 // GET TABLE
@@ -60,6 +83,12 @@ router.put('/:table/:id', requireAuth, async (req, res) => {
     const query = `UPDATE ${table} SET ${placeholders} WHERE id = ?`;
     const params = [...Object.values(req.body), id];
     const [result] = await connection.execute(query, params);
+
+    if (req.body.mark3) {
+      const selectQuery = `SELECT * FROM ${table} WHERE id = ?`;
+      const [selectResult] = await connection.execute(selectQuery, [id]);
+      sendEmail(selectResult[0]);
+    }
 
     res.json({ affectedRows: result.affectedRows });
   } catch (error) {
