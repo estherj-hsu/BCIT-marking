@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, ListGroup, Form, Button } from 'react-bootstrap';
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ASSIGNMENTS } from '../common/constants';
 import { API_URL } from '../common/config';
-import { isEmpty } from "lodash";
+import { markingApi } from '../common/api';
+import { isEmpty } from 'lodash';
 import './Marker.css';
-import axios from 'axios';
 
 export function Marker(props) {
-  const { studentList } = props;
+  const { studentList, getStudents } = props;
   const [formValue, setFormValue] = useState({});
   const [isValidated, setIsValidated] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const urlParams = useParams();
   const student = studentList.find(st => st.id === Number(urlParams.id));
   const formRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkDone();
@@ -39,10 +40,11 @@ export function Marker(props) {
   };
 
   const handleUpdate = () => {
-    axios.put(`${API_URL}/students/${urlParams.id}`, formValue).then((response) => {
+    markingApi.put(`${API_URL}/students/${urlParams.id}`, formValue).then((response) => {
 
       console.log(response.data);
       setIsDone(true);
+      getStudents();
     });
   };
 
@@ -79,13 +81,12 @@ export function Marker(props) {
             })}
           </ListGroup>
           {isDone ?
-            <Link to="/instructor">
-              <Button
-                size="sm"
-                variant="outline-primary">
-                Back
-              </Button>
-            </Link>
+            <Button
+              onClick={() => navigate(-1)}
+              size="sm"
+              variant="outline-primary">
+              Back
+            </Button>
           :
             <Button
               size="sm"

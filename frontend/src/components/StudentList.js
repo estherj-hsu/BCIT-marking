@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, Row, Col, Form, Modal } from 'react-bootstrap';
 import { startCase } from "lodash";
 import { API_URL } from '../common/config';
-import axios from 'axios';
+import { markingApi } from '../common/api';
 
 const STUDENT_FIELDS = ['firstName', 'lastName', 'password', 'email'];
 
@@ -26,7 +26,7 @@ export function StudentList(props) {
   };
 
   const handleUpdate = () => {
-    axios.post(`${API_URL}/students`, formValue).then((response) => {
+    markingApi.post(`${API_URL}/students`, formValue).then((response) => {
 
       console.log(response.data);
       setFormValue({});

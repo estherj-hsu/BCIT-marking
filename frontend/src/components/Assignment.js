@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from "react-router-dom";
 import { Card, Form, Button, Placeholder } from 'react-bootstrap';
-import { isEmpty, pickBy, size } from "lodash";
+import { isEmpty } from "lodash";
 import { API_URL } from '../common/config';
 import { ASSIGNMENTS } from '../common/constants';
-import axios from 'axios';
+import { markingApi } from '../common/api';
 import './Assignment.css';
 
 export function Assignment(props) {
@@ -24,12 +24,11 @@ export function Assignment(props) {
   // Check unfinished assignments
   const checkAssignment = () => {
     const student = studentList.find(stu => Number(urlParams.id) === stu.id);
-    const emptyAssignments = pickBy(student, (value, key) => key.startsWith("answer") && isEmpty(value));
     setStudent(student);
-    if (size(emptyAssignments) === 0) {
+    if (student.emptyAssignments === 0) {
       setIsDone(true);
     } else {
-      setAssignment(ASSIGNMENTS[ASSIGNMENTS.length - size(emptyAssignments)]);
+      setAssignment(ASSIGNMENTS[ASSIGNMENTS.length - student.emptyAssignments]);
     }
   }
 
@@ -61,7 +60,7 @@ export function Assignment(props) {
   };
 
   const handleUpdate = () => {
-    axios.put(`${API_URL}/students/${urlParams.id}`, formValue).then((response) => {
+    markingApi.put(`${API_URL}/students/${urlParams.id}`, formValue).then((response) => {
 
       console.log(response.data);
       handleNext();
