@@ -2,6 +2,8 @@ import React,  { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Form, Row, Col } from 'react-bootstrap';
 import { API_URL } from '../common/config';
+import { useToasts } from 'react-toast-notifications';
+import { processedStudentData } from '../common/utils';
 import { markingApi } from '../common/api';
 import './Login.css';
 
@@ -10,6 +12,7 @@ export function Login(props) {
   const [isValidated, setIsValidated] = useState(false);
   const navigate = useNavigate();
   const formRef = useRef(null);
+  const { addToast } = useToasts();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -23,21 +26,28 @@ export function Login(props) {
 
   const handleLogin = () => {
     const isInstructor = formValue.loginAs === 'instructor' ? true : false;
-    markingApi.post(`${API_URL}/${formValue.loginAs}s/login`, formValue).then((response) => {
-      const { token, id } = response.data;
+    markingApi
+      .post(`${API_URL}/${formValue.loginAs}s/login`, formValue)
+      .then((response) => {
+        const { token, id } = response.data;
+        const student = processedStudentData(response.data);
+        const isMarked = student.emptyAssignments + student.emptyMarks === 0 ? true : false;
 
-      // Save Token
-      localStorage.setItem('jwtToken', token);
-      localStorage.setItem('isInstructor', isInstructor);
+        // Save Token
+        localStorage.setItem('jwtToken', token);
+        localStorage.setItem('isInstructor', isInstructor);
 
-      // Reset Login Form
-      setFormValue({});
-      formRef.current.reset();
-      props.setIsLogin(true);
+        // Reset Login Form
+        setFormValue({});
+        formRef.current.reset();
+        props.setIsLogin(true);
 
-      // Redirect
-      navigate(isInstructor ? '/instructor' : `/student/${id}`);
-    });
+        // Redirect
+        navigate(isInstructor ? '/instructor' : `/student/${id}${isMarked ? '/done' : ''}`);
+      })
+      .catch(error => {
+        addToast(error.message, { appearance: 'error', autoDismiss: true });
+      });
   };
 
   return (

@@ -7,10 +7,11 @@ import { StudentList } from './StudentList';
 import { Container, Row, Col, Spinner, Button } from 'react-bootstrap';
 import { API_URL } from '../common/config';
 import { markingApi } from '../common/api';
-import { isEmpty, pickBy, size, isNull } from "lodash";
+import { processedStudentData } from '../common/utils';
+import { isEmpty } from "lodash";
 import './Main.css';
 
-export function Main() {
+export function Main(props) {
   const [students, setStudents] = useState([]);
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
@@ -25,19 +26,7 @@ export function Main() {
 
   const getStudents = () => {
     markingApi.get(`${API_URL}/students`).then((response) => {
-      const studentData = response.data.map(stu => {
-        const emptyAssignments = size(pickBy(stu, (value, key) => key.startsWith("answer") && isNull(value)));
-        const emptyMarks = size(pickBy(stu, (value, key) => key.startsWith("mark") && isNull(value)));
-        const student = {
-          ...stu,
-          emptyAssignments,
-          emptyMarks
-        };
-
-        return student;
-      });
-      console.log('student',studentData)
-
+      const studentData = response.data.map(stu => processedStudentData(stu));
       setStudents(studentData);
     });
   }
