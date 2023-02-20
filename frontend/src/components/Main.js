@@ -76,6 +76,9 @@ export function Main() {
                 path="/student/:id"
                 element={<Assignment studentList={students} />} />
               <Route
+                path="/student/:id/done"
+                element={<Marker isStudent={true} studentList={students} />} />
+              <Route
                 path="/instructor"
                 element={<StudentList studentList={students} getStudents={getStudents} />} />
               <Route

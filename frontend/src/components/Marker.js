@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import './Marker.css';
 
 export function Marker(props) {
-  const { studentList, getStudents } = props;
+  const { isStudent, studentList, getStudents } = props;
   const [formValue, setFormValue] = useState({});
   const [isValidated, setIsValidated] = useState(false);
   const [isDone, setIsDone] = useState(false);
@@ -22,7 +22,7 @@ export function Marker(props) {
   }, []);
 
   const checkDone = () => {
-    const allMarked = student.emptyMarks === 0;
+    const allMarked = student.emptyMarks === 0 || isStudent;
     if (allMarked) {
       setIsDone(true);
     }
@@ -52,14 +52,15 @@ export function Marker(props) {
   return (
     <Card className="text-start">
       <Card.Header>
-        Student: {student && student.firstName}
+        {isStudent ? 'Hi ' : 'Student: '}
+        {student && student.firstName} ({student && student.email})
       </Card.Header>
       <Card.Body>
         <Form ref={formRef} onSubmit={handleSubmit}>
           <ListGroup variant="flush">
             {ASSIGNMENTS.map(que => {
               const answer = que.idx === 1 ? JSON.parse(student[`answer${que.idx + 1}`]).join(', ') : student[`answer${que.idx + 1}`]
-              const hasMark = !isEmpty(student[`mark${que.idx + 1}`]);
+              const hasMark = !isEmpty(student[`mark${que.idx + 1}`]) || isStudent;
 
               return (
                 <ListGroup.Item className="py-4">
@@ -69,31 +70,34 @@ export function Marker(props) {
                   {hasMark ? student[`mark${que.idx + 1}`] :
                     <Form.Control
                       required
+                      htmlSize={20}
+                      style={{ width:"100px" }}
+                      className="d-inline"
                       disabled={isDone}
                       onChange={e => setFormValue({ ...formValue, [e.target.name]: Number(e.target.value) })}
                       size="sm"
                       type="number"
-                      name={`mark${que.idx+1}`}
-                      className="d-inline" />
+                      name={`mark${que.idx+1}`} />
                   }
                 </ListGroup.Item>
               )
             })}
           </ListGroup>
-          {isDone ?
-            <Button
-              onClick={() => navigate(-1)}
-              size="sm"
-              variant="outline-primary">
-              Back
-            </Button>
-          :
-            <Button
-              size="sm"
-              variant="primary"
-              type="submit">
-              Submit
-            </Button>
+          {isStudent ? null :
+            isDone ?
+              <Button
+                onClick={() => navigate(-1)}
+                size="sm"
+                variant="outline-primary">
+                Back
+              </Button>
+            :
+              <Button
+                size="sm"
+                variant="primary"
+                type="submit">
+                Submit
+              </Button>
           }
         </Form>
       </Card.Body>
