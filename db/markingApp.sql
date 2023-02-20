@@ -8,7 +8,6 @@
 -- PHP Version: 8.1.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -41,7 +40,7 @@ CREATE TABLE `instructors` (
 --
 
 INSERT INTO `instructors` (`id`, `firstName`, `lastName`, `email`, `password`) VALUES
-(1, 'Super', 'Instructor', 'instructor@test.com', 'password');
+(1, 'Super', 'Instructor', 'instructor@test.com', '$2a$10$/qETjjsmUGrvI1yUSO0KaO2mQzD7vcoMXdPbkfa0JYYdefHGbNGmO');
 
 -- --------------------------------------------------------
 
@@ -60,8 +59,7 @@ CREATE TABLE `students` (
   `answer3` varchar(128) DEFAULT NULL,
   `mark1` int(128) DEFAULT NULL,
   `mark2` int(128) DEFAULT NULL,
-  `mark3` int(128) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `mark3` int(128) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -69,9 +67,9 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `firstName`, `lastName`, `email`, `password`) VALUES
-(1, 'Alice', 'Lin', 'alice@test.com', 'password'),
-(2, 'Bruce', 'Wang', 'bruce@test.com', 'password'),
-(3, 'Chris', 'Chen', 'chris@test.com', 'password');
+(1, 'Alice', 'Lin', 'alice@test.com', '$2a$10$1W8bk4jUiH/wPQ4ONEKXI.ffLG4p6T3C51RrORHx.QcMil0Rj/uvG'),
+(2, 'Bruce', 'Wang', 'bruce@test.com', '$2a$10$1W8bk4jUiH/wPQ4ONEKXI.ffLG4p6T3C51RrORHx.QcMil0Rj/uvG'),
+(3, 'Chris', 'Chen', 'chris@test.com', '$2a$10$1W8bk4jUiH/wPQ4ONEKXI.ffLG4p6T3C51RrORHx.QcMil0Rj/uvG');
 COMMIT;
 
 --
